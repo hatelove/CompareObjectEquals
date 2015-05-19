@@ -101,6 +101,56 @@ this.ScenarioSetup(scenarioInfo);
 #line hidden
             this.ScenarioCleanup();
         }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Compare 2 Person Collection Equals")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "FindPerson")]
+        public virtual void Compare2PersonCollectionEquals()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Compare 2 Person Collection Equals", ((string[])(null)));
+#line 12
+ this.ScenarioSetup(scenarioInfo);
+#line hidden
+            TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Id",
+                        "Name",
+                        "Age"});
+            table3.AddRow(new string[] {
+                        "1",
+                        "A",
+                        "10"});
+            table3.AddRow(new string[] {
+                        "2",
+                        "B",
+                        "20"});
+            table3.AddRow(new string[] {
+                        "3",
+                        "C",
+                        "30"});
+#line 13
+ testRunner.When("I got a actual person collection", ((string)(null)), table3, "When ");
+#line hidden
+            TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Id",
+                        "Name",
+                        "Age"});
+            table4.AddRow(new string[] {
+                        "1",
+                        "A",
+                        "10"});
+            table4.AddRow(new string[] {
+                        "2",
+                        "B",
+                        "20"});
+            table4.AddRow(new string[] {
+                        "3",
+                        "C",
+                        "30"});
+#line 18
+ testRunner.Then("I hope actual person collection should be equal to expected person collection", ((string)(null)), table4, "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore
