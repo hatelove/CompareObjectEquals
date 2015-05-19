@@ -22,9 +22,15 @@ namespace ComparingObjectInTest
             };
 
             //when actual is different from expected, we can't know what's different from test failed message; Id? or Price? we don't know.
-            Assert.AreEqual(expected, actual); 
+            //when we need different definition of Equal between two Order instances in the other scenario or test case, we can't modify the Order Equals() dynamicly, becauses of that's production code; Remember, never modify your production design for testing.
+            Assert.AreEqual(expected, actual);
         }
 
+        [TestMethod]
+        public void Test_Person_Equals_by_Assert_Equals()
+        {
+            
+        }
     }
 
     internal class Person //Person didn't override Equals
@@ -41,7 +47,7 @@ namespace ComparingObjectInTest
     }
 
     internal class Order : IEquatable<Order>
-    {        
+    {
         public int Price { get; set; }
 
         public int Id { get; set; }
