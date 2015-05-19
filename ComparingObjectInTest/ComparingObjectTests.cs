@@ -23,13 +23,32 @@ namespace ComparingObjectInTest
 
             //when actual is different from expected, we can't know what's different from test failed message; Id? or Price? we don't know.
             //when we need different definition of Equal between two Order instances in the other scenario or test case, we can't modify the Order Equals() dynamicly, becauses of that's production code; Remember, never modify your production design for testing.
+            //lack of flexibility and hard to extend by need of 
             Assert.AreEqual(expected, actual);
         }
 
         [TestMethod]
-        public void Test_Person_Equals_by_Assert_Equals()
+        public void Test_Person_Equals_Flat_all_properties_by_Assert_Equals()
         {
-            
+            var expected = new Person
+            {
+                Id = 1,
+                Name = "A",
+                Age = 10,
+            };
+
+            var actual = new Person
+            {
+                Id = 1,
+                Name = "A",
+                Age = 10,
+            };
+
+            //flat all properties is a general solution for verify two instances were equal, but it wasted developers too much time and copy/paste sometimes makes mistakes; 
+            //in addition, if you need to compare two collection of Person, you need design a for loop in testing; it obscured scenario meanings.            
+            Assert.AreEqual(expected.Id, actual.Id);
+            Assert.AreEqual(expected.Name, actual.Name);
+            Assert.AreEqual(expected.Age, actual.Age);
         }
     }
 
