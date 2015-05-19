@@ -21,7 +21,8 @@ namespace ComparingObjectInTest
                 Price = 10,
             };
 
-            Assert.AreEqual(expected, actual); //this would be failed because of "Order" is a reference type; if Order didn't override Equals(), AreEqual() will invoke Object.Equals()
+            //this test will pass; when you override Equals(), AreEqual will invoke Order's Equals(), rather than Object's Equals()
+            Assert.AreEqual(expected, actual); 
         }
     }
 
@@ -38,10 +39,27 @@ namespace ComparingObjectInTest
         public Order Order { get; set; }
     }
 
-    internal class Order
-    {
+    internal class Order : IEquatable<Order>
+    {        
         public int Price { get; set; }
 
         public int Id { get; set; }
+
+        // remind: when you override Equals(), you should override GetHashCode() too.
+        public override bool Equals(object obj)
+        {
+            var order = obj as Order;
+            if (order != null)
+            {
+                return this.Equals(order);
+            }
+
+            return false;
+        }
+        public bool Equals(Order other)
+        {
+            //define Equals of Order type between two Order instances
+            return this.Id == other.Id && this.Price == other.Price;
+        }
     }
 }
