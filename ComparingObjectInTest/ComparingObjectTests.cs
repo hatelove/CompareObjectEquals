@@ -18,15 +18,16 @@ namespace ComparingObjectInTest
             var actual = new Order
             {
                 Id = 1,
-                Price = 10,
+                Price = 20,
             };
 
-            //this test will pass; when you override Equals(), AreEqual will invoke Order's Equals(), rather than Object's Equals()
+            //when actual is different from expected, we can't know what's different from test failed message; Id? or Price? we don't know.
             Assert.AreEqual(expected, actual); 
         }
+
     }
 
-    internal class Person
+    internal class Person //Person didn't override Equals
     {
         public string Name { get; set; }
 
