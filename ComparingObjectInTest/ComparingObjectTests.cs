@@ -237,6 +237,34 @@ namespace ComparingObjectInTest
             //compare each dictionary instance by ExpectedObjects
             expectedDictionary.ToExpectedObject().ShouldEqual(actualDictionary);
         }
+
+        [TestMethod]
+        public void Test_DataTable_Equals_with_ExpectedObjects_and_ItemArray()
+        {
+            var expected = new DataTable();
+            expected.Columns.Add("Id");
+            expected.Columns.Add("Name");
+            expected.Columns.Add("Age");
+
+            expected.Rows.Add(1, "A", 10);
+            expected.Rows.Add(2, "B", 20);
+            expected.Rows.Add(3, "C", 30);
+
+            var actual = new DataTable();
+            actual.Columns.Add("Id");
+            actual.Columns.Add("Name");
+            actual.Columns.Add("Age");
+
+            actual.Rows.Add(1, "A", 10);
+            actual.Rows.Add(2, "B", 20);
+            actual.Rows.Add(3, "C", 40);            
+
+            //compare by ItemArray, just compare the value without caring column name; the disadvantage is that error information didn't show what column's value is different;
+            var expectedItemArrayCollection = expected.AsEnumerable().Select(dr => dr.ItemArray);
+            var actualItemArrayCollection = actual.AsEnumerable().Select(dr => dr.ItemArray);
+            
+            expectedItemArrayCollection.ToExpectedObject().ShouldEqual(actualItemArrayCollection);
+        }
     }
 
     internal class Person //Person didn't override Equals
