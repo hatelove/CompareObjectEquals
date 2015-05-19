@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Data;
 using System.Linq;
 using ExpectedObjects;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ComparingObjectInTest
 {
@@ -26,7 +27,7 @@ namespace ComparingObjectInTest
 
             //when actual is different from expected, we can't know what's different from test failed message; Id? or Price? we don't know.
             //when we need different definition of Equal between two Order instances in the other scenario or test case, we can't modify the Order Equals() dynamicly, becauses of that's production code; Remember, never modify your production design for testing.
-            //lack of flexibility and hard to extend by need of 
+            //lack of flexibility and hard to extend by need of
             Assert.AreEqual(expected, actual);
         }
 
@@ -47,8 +48,8 @@ namespace ComparingObjectInTest
                 Age = 10,
             };
 
-            //flat all properties is a general solution for verify two instances were equal, but it wasted developers too much time and copy/paste sometimes makes mistakes; 
-            //in addition, if you need to compare two collection of Person, you need design a for loop in testing; it obscured scenario meanings.            
+            //flat all properties is a general solution for verify two instances were equal, but it wasted developers too much time and copy/paste sometimes makes mistakes;
+            //in addition, if you need to compare two collection of Person, you need design a for loop in testing; it obscured scenario meanings.
             Assert.AreEqual(expected.Id, actual.Id);
             Assert.AreEqual(expected.Name, actual.Name);
             Assert.AreEqual(expected.Age, actual.Age);
@@ -182,13 +183,13 @@ namespace ComparingObjectInTest
 
         [TestMethod]
         public void Test_PartialCompare_Person_Equals_with_ExpectedObjects()
-        {            
+        {
             //when partial comparing, you need to use anonymous type too. Because only anonymous type can dynamic define only a few properties should be assign.
-            var expected = new 
+            var expected = new
             {
-                Id = 1,                
+                Id = 1,
                 Age = 10,
-                Order = new { Id = 91}, // composed type should be used anonymous type too, only compare properties. If you trace ExpectedObjects's source code, you will find it invoke config.IgnoreType() first.
+                Order = new { Id = 91 }, // composed type should be used anonymous type too, only compare properties. If you trace ExpectedObjects's source code, you will find it invoke config.IgnoreType() first.
             }.ToExpectedObject();
 
             var actual = new Person
@@ -199,9 +200,42 @@ namespace ComparingObjectInTest
                 Order = new Order { Id = 91, Price = 910 },
             };
 
-
             // partial comparing use ShouldMatch(), rather than ShouldEqual()
             expected.ShouldMatch(actual);
+        }
+
+        [TestMethod]
+        public void Test_DataTable_Equals_with_ExpectedObjects()
+        {
+            var expected = new DataTable();
+            expected.Columns.Add("Id");
+            expected.Columns.Add("Name");
+            expected.Columns.Add("Age");
+
+            expected.Rows.Add(1, "A", 10);
+            expected.Rows.Add(2, "B", 20);
+            expected.Rows.Add(3, "C", 30);
+
+            var actual = new DataTable();
+            actual.Columns.Add("Id");
+            actual.Columns.Add("Name");
+            actual.Columns.Add("Age");
+
+            actual.Rows.Add(1, "A", 10);
+            actual.Rows.Add(2, "B", 20);
+            actual.Rows.Add(3, "C", 40);
+
+            // it will cause problem when push to stack; because of ToExpectedObject() will recusively get all properties of DateTable
+            //var expectOjbect = expected.ToExpectedObject();
+            //expectOjbect.ShouldEqual(actual);
+
+            //convert datatable to Enumerable<Dictionary<string, object>> to compare
+            var expectedDictionary = expected.AsEnumerable().Select(dr => expected.Columns.Cast<DataColumn>().ToDictionary(dc => dc.ColumnName, dc => dr[dc]));
+
+            var actualDictionary = actual.AsEnumerable().Select(dr => actual.Columns.Cast<DataColumn>().ToDictionary(dc => dc.ColumnName, dc => dr[dc]));
+
+            //compare each dictionary instance by ExpectedObjects
+            expectedDictionary.ToExpectedObject().ShouldEqual(actualDictionary);
         }
     }
 
@@ -223,6 +257,6 @@ namespace ComparingObjectInTest
     {
         public int Price { get; set; }
 
-        public int Id { get; set; }        
+        public int Id { get; set; }
     }
 }
