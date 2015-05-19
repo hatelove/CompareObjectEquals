@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 
 namespace ComparingObjectInTest
 {
@@ -49,6 +51,66 @@ namespace ComparingObjectInTest
             Assert.AreEqual(expected.Id, actual.Id);
             Assert.AreEqual(expected.Name, actual.Name);
             Assert.AreEqual(expected.Age, actual.Age);
+        }
+
+        [TestMethod]
+        public void Test_Person_Equals_with_AnonymousType()
+        {
+            var expected = new Person
+            {
+                Id = 1,
+                Name = "A",
+                Age = 10,
+            };
+
+            var actual = new Person
+            {
+                Id = 1,
+                Name = "A",
+                Age = 10,
+            };
+
+            //project expected Person to anonymous type
+            var expectedAnonymous = new
+            {
+                Id = expected.Id,
+                Name = expected.Name,
+                Age = expected.Age
+            };
+
+            //project actual Person to anonymous type
+            var actualAnonymous = new
+            {
+                Id = actual.Id,
+                Name = actual.Name,
+                Age = actual.Age,
+            };
+
+            //because of anonymous type comparing equals by value of each property, it saves time of overriding Equals() and provides flexibility for testing
+            Assert.AreEqual(expectedAnonymous, actualAnonymous);
+        }
+
+        [TestMethod]
+        public void Test_PersonCollection_Equals_with_AnonymousType_by_CollectionAssert()
+        {
+            //project collection from List<Person> to List<AnonymousType> by Select()
+            var expected = new List<Person>
+            {
+                new Person { Id=1, Name="A",Age=10},
+                new Person { Id=2, Name="B",Age=20},
+                new Person { Id=3, Name="C",Age=30},
+            }.Select(x => new { Id = x.Id, Name = x.Name, Age = x.Age }).ToList();
+
+            //project collection from List<Person> to List<AnonymousType> by Select()
+            var actual = new List<Person>
+            {
+                new Person { Id=1, Name="A",Age=10},
+                new Person { Id=2, Name="B",Age=20},
+                new Person { Id=3, Name="C",Age=30},
+            }.Select(x => new { Id = x.Id, Name = x.Name, Age = x.Age }).ToList();
+
+            //using CollectionAssert to iterate comparing each element from two collection, each anonymous instance will compare value of property
+            CollectionAssert.AreEqual(expected, actual);
         }
     }
 
